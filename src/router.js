@@ -1,9 +1,11 @@
+import app from 'ampersand-app'
 import Layout from './layout'
 import Public from './pages/public'
 import qs from 'qs'
 import React from 'react'
 import Repos from './pages/repo'
 import Router from 'ampersand-router'
+import xhr from 'xhr'
 
 export default Router.extend({
     renderPage(page, options = {layout: true}) {
@@ -21,6 +23,7 @@ export default Router.extend({
         '':'public',
         'repos' : 'repos',
         'login' : 'login',
+        'logout' : 'logout',
         'auth/callback?:query' : 'authCallback'
     },
 
@@ -40,8 +43,21 @@ export default Router.extend({
         })
     },
 
+    logout () {
+        window.localStorage.clear()
+        window.location = '/'
+    },
+
     authCallback (query) {
         query = qs.parse(query)
         console.log(query);
+
+        xhr({
+            url: 'https://react-github-tags.herokuapp.com/authenticate/' + query.code,
+            json: true
+        }, callback(error, req, body) => {
+            app.me.token = body.token;
+            this.redirectTo('/repos')
+        })
     }
 })
