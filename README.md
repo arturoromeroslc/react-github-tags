@@ -1,2 +1,3 @@
 # react-github-tags
-Repo created for the Front End Masters React Course
+Repo created for the getting github tags
+
